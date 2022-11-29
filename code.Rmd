@@ -1,0 +1,68 @@
+---
+title: "code"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+#some packages may not be used, ignore them
+library(readxl)
+library(tidyverse)
+library(viridis)
+library(rio)
+library(dplyr)
+library(ggplot2)
+library(patchwork)
+library(MASS)
+library(corrplot)
+library(leaps)
+library(car)
+library(caret)
+library(performance)
+
+knitr::opts_chunk$set(
+	echo = TRUE,
+	warning = FALSE,
+	fig.width = 8, 
+  fig.height = 6,
+  out.width = "90%"
+)
+
+options(
+  ggplot2.continuous.colour = "viridis",
+  ggplot2.continuous.fill = "viridis"
+)
+
+scale_colour_discrete = scale_colour_viridis_d
+scale_fill_discrete = scale_fill_viridis_d
+
+theme_set(theme_minimal() + theme(legend.position = "bottom"))
+
+
+```
+
+```{r}
+body_density_data = 
+  read_excel("body_density_data.xlsx") %>% 
+  janitor::clean_names() 
+skimr::skim(body_density_data)
+summary(body_density_data[ ,-1])
+colnames(body_density_data)
+dim(body_density_data)
+body_density_data %>% 
+  broom::tidy() %>% 
+  knitr::kable()
+
+# bodyfat_siri <- 495/body_density_data$body_density - 450  siri‘s equation
+# bodyfat_Brozek <-  457/body_density_data$body_density − 414.2 Brozek
+bodyfat_siri <- 495/body_density_data$body_density - 450 
+bodyfat_Brozek <-  457/body_density_data$body_density - 414.2
+# *182* - 0 bodyfat percentage. so it's wrong input
+body_density_data$body_density[182]
+495/body_density_data$body_density[182] - 450
+457/body_density_data$body_density [182]- 414.2
+body_density_data <- body_density_data[-182, ]
+# *216* is obesity-extreme bodyfat
+# *39* exterme weight but bodyfat is reasonable
+```
+the data set contains 252 male with measurements of their body fat percentage and various anthropometric measurements.
